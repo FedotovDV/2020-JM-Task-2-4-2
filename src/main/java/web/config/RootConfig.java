@@ -51,6 +51,9 @@ public class RootConfig implements WebMvcConfigurer {
         properties.getProperty("hibernate.hbm2ddl.auto", environment.getProperty("hibernate.hbm2ddl.auto"));
         properties.getProperty("hibernate.dialect", environment.getProperty("hibernate.dialect"));
         properties.getProperty("spring.jpa.properties.hibernate.id.new_generator_mappings", environment.getProperty("spring.jpa.properties.hibernate.id.new_generator_mappings"));
+        properties.getProperty("hibernate.connection.characterEncoding ", environment.getProperty("hibernate.connection.characterEncoding "));
+        properties.getProperty("hibernate.connection.useUnicode", environment.getProperty("hibernate.connection.useUnicode"));
+        properties.getProperty("hibernate.connection.charSet", environment.getProperty("hibernate.connection.charSet"));
         return properties;
     }
 
