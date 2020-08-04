@@ -5,9 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import web.model.User;
 import web.service.SecurityService;
 import web.service.UserService;
@@ -33,29 +31,43 @@ public class UserController {
         this.userValidator = userValidator;
     }
 
-    @RequestMapping(value = "/registration", method = RequestMethod.GET)
-    public String registration(Model model) {
-        model.addAttribute("userForm", new User());
+    @GetMapping("/user")
+    public String carForm( ModelMap model) {
 
+               List<User> users = userService.getUsers();
+        model.addAttribute("title", "Users");
+        model.addAttribute("users", users);
+        return "user";
+    }
+
+    @GetMapping("/registration")
+    public String registration(Model model) {
+        model.addAttribute("user", new User());
         return "registration";
     }
+    @PostMapping("/save")
+    public String saveEmployee(@ModelAttribute("user") User user) {
 
-    @RequestMapping(value = "/registration", method = RequestMethod.POST)
-    public String registration(@ModelAttribute("userForm") User userForm, BindingResult bindingResult, Model model) {
-        userValidator.validate(userForm, bindingResult);
+        userService.addUser(user);
 
-        if (bindingResult.hasErrors()) {
-            return "registration";
-        }
-
-        userService.addUser(userForm);
-
-        securityService.autoLogin(userForm.getUsername(), userForm.getConfirmPassword());
-
-        return "redirect:/welcome";
+        return "redirect:/user";
     }
+//    @PostMapping("/save")
+//    public String registration(@ModelAttribute("user") User user, BindingResult bindingResult, Model model) {
+//        userValidator.validate(user, bindingResult);
+//
+//        if (bindingResult.hasErrors()) {
+//            return "registration";
+//        }
+//
+//        userService.addUser(user);
+//
+//        securityService.autoLogin(user.getUsername(), user.getConfirmPassword());
+//
+//        return "redirect:/user";
+//    }
 
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    @GetMapping("/login")
     public String login(Model model, String error, String logout) {
         if (error != null) {
             model.addAttribute("error", "Username or password is incorrect.");
@@ -68,12 +80,12 @@ public class UserController {
         return "login";
     }
 
-    @RequestMapping(value = {"/", "/welcome"}, method = RequestMethod.GET)
+    @GetMapping(value = {"/", "/welcome"})
     public String welcome(Model model) {
         return "welcome";
     }
 
-    @RequestMapping(value = "/admin", method = RequestMethod.GET)
+    @GetMapping("/admin")
     public String admin(Model model) {
         return "admin";
     }

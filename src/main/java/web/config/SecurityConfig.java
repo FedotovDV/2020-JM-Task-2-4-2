@@ -77,9 +77,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // http.csrf().disable(); - попробуйте выяснить сами, что это даёт
         http.authorizeRequests()
                 .antMatchers("/").permitAll() // доступность всем
-                .antMatchers("/user").access("hasAnyRole('ROLE_USER')") // разрешаем входить на /user пользователям с ролью User
+                .antMatchers("/registration").permitAll() // доступность всем
+                .antMatchers("/user").permitAll() // доступность всем
+//                .antMatchers("/user").access("hasAnyRole('ROLE_USER')") // разрешаем входить на /user пользователям с ролью User
                 .and().formLogin()  // Spring сам подставит свою логин форму
-                .successHandler(loginSuccessHandler) // подключаем наш SuccessHandler для перенеправления по ролям
+//                .successHandler(loginSuccessHandler) // подключаем наш SuccessHandler для перенеправления по ролям
                 .and()
                 .logout().logoutSuccessUrl("/login").permitAll();
 

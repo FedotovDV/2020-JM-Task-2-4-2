@@ -15,7 +15,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     @Override
     public void onAuthenticationSuccess(HttpServletRequest httpServletRequest,
                                         HttpServletResponse httpServletResponse,
-                                        Authentication authentication) throws IOException, ServletException {
-        httpServletResponse.sendRedirect("/hello");
+                                        Authentication authentication) throws IOException {
+        httpServletResponse.sendRedirect("/");
     }
 }
