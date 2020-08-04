@@ -58,14 +58,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .antMatchers("/hello").access("hasAnyRole('ADMIN')").anyRequest().authenticated();
 //    }
 
+    @Autowired
+    private  UserDetailsService userDetailsService; // сервис, с помощью которого тащим пользователя
+    @Autowired
+    private  LoginSuccessHandler loginSuccessHandler; // класс, в котором описана логика перенаправления пользователей по ролям
 
-    private final UserDetailsService userDetailsService; // сервис, с помощью которого тащим пользователя
-    private final LoginSuccessHandler loginSuccessHandler; // класс, в котором описана логика перенаправления пользователей по ролям
 
-    public SecurityConfig(@Qualifier("userDetailsServiceImpl") UserDetailsService userDetailsService, LoginSuccessHandler loginSuccessHandler) {
-        this.userDetailsService = userDetailsService;
-        this.loginSuccessHandler = loginSuccessHandler;
-    }
 
     @Autowired
     public void configureGlobalSecurity(AuthenticationManagerBuilder auth) throws Exception {
