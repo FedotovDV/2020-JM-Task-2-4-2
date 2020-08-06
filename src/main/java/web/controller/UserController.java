@@ -82,6 +82,6 @@ public class UserController {
 
     @GetMapping("/admin")
     public String admin(Model model) {
-        return "admin";
+        return "admin-page";
     }
 }
