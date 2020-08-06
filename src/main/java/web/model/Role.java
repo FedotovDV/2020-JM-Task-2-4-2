@@ -13,10 +13,8 @@ import java.util.Set;
 public class Role implements GrantedAuthority {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(name = "role")
     private String role;
 
 
@@ -28,10 +26,6 @@ public class Role implements GrantedAuthority {
 
     }
 
-    public Role(Long id, String role) {
-        this.id = id;
-        this.role = role;
-    }
 
     public Long getId() {
         return id;
@@ -49,8 +43,25 @@ public class Role implements GrantedAuthority {
         this.role = role;
     }
 
+
+    public Set<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
+    }
+
     @Override
     public String getAuthority() {
         return role;
+    }
+
+    @Override
+    public String toString() {
+        return "Role{" +
+                "id=" + id +
+                ", role='" + role + '\'' +
+                '}';
     }
 }

@@ -41,7 +41,7 @@ public class UserController {
         return "registration";
     }
     @PostMapping("/save")
-    public String saveEmployee(@ModelAttribute("user") User user) {
+    public String saveUser(@ModelAttribute("user") User user) {
 
         userService.addUser(user);
 

@@ -2,6 +2,7 @@ package web.service;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User.UserBuilder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -10,6 +11,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import web.dao.UserDao;
 import web.model.User;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -34,8 +38,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             builder = org.springframework.security.core.userdetails.User.withUsername(username);
             builder.disabled(!user.isEnabled());
             builder.password(user.getPassword());
-            String[] authorities = user.getAuthorities()
-                    .stream().map(a -> a.getAuthority()).toArray(String[]::new);
+            List<String> list = new ArrayList<>();
+            for (GrantedAuthority a : user.getAuthorities()) {
+                String authority = a.getAuthority();
+                list.add(authority);
+            }
+            String[] authorities = list.toArray(new String[0]);
 
             builder.authorities(authorities);
         } else {
