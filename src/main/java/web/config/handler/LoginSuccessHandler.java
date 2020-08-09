@@ -1,6 +1,7 @@
 package web.config.handler;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +17,25 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest httpServletRequest,
                                         HttpServletResponse httpServletResponse,
                                         Authentication authentication) throws IOException {
-        httpServletResponse.sendRedirect("/");
+//        httpServletResponse.sendRedirect("/");
+        httpServletResponse.setStatus(HttpServletResponse.SC_OK);
+        System.out.println("LoginSuccessHandler ");
+        boolean admin = false;
+
+        for (GrantedAuthority auth : authentication.getAuthorities()) {
+            System.out.println("authentication "+ auth.getAuthority());
+            if ("ROLE_ADMIN".equals(auth.getAuthority())){
+                admin = true;
+            }
+        }
+
+        if(admin){
+            System.out.println("LoginSuccessHandler /admin");
+            httpServletResponse.sendRedirect("/admin");
+        }else{
+            System.out.println("LoginSuccessHandler /user");
+            httpServletResponse.sendRedirect("/user");
+        }
     }
+
 }

@@ -9,7 +9,7 @@ import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
-
+    @Autowired
     private final UserDao userDao;
 
     @Autowired
@@ -53,4 +53,12 @@ public class UserServiceImpl implements UserService {
     public User getUserByName(String username) {
         return userDao.getUserByName(username);
     }
+
+//    @Override
+//    public User getUserByEmail(String email) {
+//        return userDao.getUserByEmail(email);
+//    }
+
+
+
 }

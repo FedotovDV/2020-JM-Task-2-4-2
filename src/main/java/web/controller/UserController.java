@@ -4,11 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import web.model.User;
 import web.service.UserService;
 import web.util.UserValidator;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Controller
@@ -27,7 +29,7 @@ public class UserController {
     }
 
     @GetMapping("/user")
-    public String carForm( ModelMap model) {
+    public String userForm( ModelMap model) {
 
                List<User> users = userService.getUsers();
         model.addAttribute("title", "Users");
@@ -40,11 +42,16 @@ public class UserController {
         model.addAttribute("user", new User());
         return "registration";
     }
-    @PostMapping("/save")
-    public String saveUser(@ModelAttribute("user") User user) {
 
+    @PostMapping("/registration")
+    public String saveUser(@ModelAttribute @Valid User user, BindingResult result) {
+        userValidator.validate(user, result);
+        if (result.hasErrors()) {
+            System.out.println("result.hasErrors()" + result.toString());
+            return "/registration";
+        }
+        System.out.println("addUser " +user.getEmail());
         userService.addUser(user);
-
         return "redirect:/user";
     }
 //    @PostMapping("/save")
@@ -57,23 +64,29 @@ public class UserController {
 //
 //        userService.addUser(user);
 //
-//        securityService.autoLogin(user.getUsername(), user.getConfirmPassword());
+////        securityService.autoLogin(user.getUsername(), user.getConfirmPassword());
 //
 //        return "redirect:/user";
 //    }
 
-    @GetMapping("/login")
+    @GetMapping(value = "/login")
+    public String loginForm() {
+        return "login";
+    }
+
+    @PostMapping("/login")
     public String login(Model model, String error, String logout) {
         if (error != null) {
             model.addAttribute("error", "Username or password is incorrect.");
         }
-
         if (logout != null) {
             model.addAttribute("message", "Logged out successfully.");
         }
-
         return "login";
     }
+
+
+
 
     @GetMapping(value = {"/", "/welcome"})
     public String welcome(Model model) {

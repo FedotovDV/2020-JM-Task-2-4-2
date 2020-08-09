@@ -1,16 +1,17 @@
 package web.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
-import web.model.Role;
+
 import web.model.User;
+import web.service.UserDetailsServiceImpl;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.Collections;
+import javax.persistence.TypedQuery;
 import java.util.List;
-import java.util.Map;
 
 @Repository
 public class UserDaoImpl implements UserDao {
@@ -20,7 +21,12 @@ public class UserDaoImpl implements UserDao {
     private EntityManager entityManager;
 
 
-    private final PasswordEncoder passwordEncoder;
+//
+//    @Autowired
+//    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     public UserDaoImpl(PasswordEncoder passwordEncoder) {
@@ -28,9 +34,13 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public User getUserByName(String name) {
-
-        return entityManager.find(User.class, name);
+    public User getUserByName(String email) {
+        TypedQuery<User> q = entityManager.createQuery(
+                "select u from User u where u.email = :email",
+                User.class
+        );
+        q.setParameter("email", email);
+        return q.getResultList().stream().findAny().orElse(null);
     }
 
 
@@ -64,4 +74,9 @@ public class UserDaoImpl implements UserDao {
 
         return entityManager.find(User.class, id);
     }
+
+//    @Override
+//    public User getUserByEmail(String email) {
+//        return userDetailsService.loadUserByUsername(email);
+//    }
 }

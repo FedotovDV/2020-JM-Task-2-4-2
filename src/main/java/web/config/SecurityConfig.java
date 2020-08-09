@@ -16,6 +16,7 @@ import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import web.config.handler.LoginSuccessHandler;
+import web.security.AuthProviderImpl;
 
 @Configuration
 @EnableWebSecurity
@@ -61,11 +62,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //    }
 
     @Autowired
-    private  UserDetailsService userDetailsService; // сервис, с помощью которого тащим пользователя
+    private UserDetailsService userDetailsService; // сервис, с помощью которого тащим пользователя
     @Autowired
-    private  LoginSuccessHandler loginSuccessHandler; // класс, в котором описана логика перенаправления пользователей по ролям
+    private LoginSuccessHandler loginSuccessHandler; // класс, в котором описана логика перенаправления пользователей по ролям
 
-
+//    @Autowired
+//    private AuthProviderImpl authProvider;//возможно дублирование UserDetailsServiceImpl
 
     @Autowired
     public void configureGlobalSecurity(AuthenticationManagerBuilder auth) throws Exception {
@@ -80,17 +82,58 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         filter.setForceEncoding(true);
         http.addFilterBefore(filter, CsrfFilter.class);
         // http.csrf().disable(); - попробуйте выяснить сами, что это даёт
+//        http.authorizeRequests()
+//                .antMatchers("/").permitAll() // доступность всем
+//                .antMatchers("/registration").permitAll() // доступность всем
+//                .antMatchers("/user").permitAll() // доступность всем
+////                .antMatchers("/user").access("hasAnyRole('ROLE_USER')") // разрешаем входить на /user пользователям с ролью User
+//                .and().formLogin()  // Spring сам подставит свою логин форму
+////                .successHandler(loginSuccessHandler) // подключаем наш SuccessHandler для перенеправления по ролям
+//                .and()
+//                .logout().logoutSuccessUrl("/login").permitAll();
+//        http
+//                .authorizeRequests()
+//                .antMatchers("/", "/registration").permitAll()
+//                .antMatchers("/admin").hasRole("ADMIN")
+//                .anyRequest().authenticated()
+//                .and().csrf().disable()
+//                .formLogin().successHandler(loginSuccessHandler)
+//                .loginPage("/login")
+//                .permitAll()
+//                .and()
+//                .logout()
+//                .permitAll();
+//        http.exceptionHandling().accessDeniedPage("/403");
         http.authorizeRequests()
-                .antMatchers("/").permitAll() // доступность всем
-                .antMatchers("/registration").permitAll() // доступность всем
-                .antMatchers("/user").permitAll() // доступность всем
-//                .antMatchers("/user").access("hasAnyRole('ROLE_USER')") // разрешаем входить на /user пользователям с ролью User
-                .and().formLogin()  // Spring сам подставит свою логин форму
-//                .successHandler(loginSuccessHandler) // подключаем наш SuccessHandler для перенеправления по ролям
+                .antMatchers("/", "/registration", "/login").anonymous()
+                .antMatchers("/user").authenticated()
+                .antMatchers("/admin", "/admin/*").hasAnyAuthority("ROLE_ADMIN")
+                .anyRequest().authenticated()
+                .and().csrf().disable()
+                .formLogin()
+//                .loginPage("/login")
+//                .loginProcessingUrl("/login/process")
+//                .usernameParameter("email")
+//                .failureUrl("/login?error=true")
+                .successHandler(loginSuccessHandler)
                 .and()
-                .logout().logoutSuccessUrl("/login").permitAll();
+                .exceptionHandling()
+                .accessDeniedPage("/login")
+                .and()
+                .logout()
+                .permitAll()
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                .logoutSuccessUrl("/login?logout");
 
     }
+
+//
+//    //возможно дублирование UserDetailsServiceImpl
+//    @Override
+//    protected void configure(AuthenticationManagerBuilder auth) {
+//        auth.authenticationProvider(authProvider);
+//    }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {

@@ -2,14 +2,20 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title></title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
+    <title>Login Form</title>
 </head>
 <body>
 <div>
-    <form method="post" action="/login">
-        <input name="j_username"/>
-        <input name="j_password"/>
+    <form method="post" action="/login/process">
+        <input name="email" placeholder="email"/>
+        <input name="password" placeholder="password"/>
         <input type="submit"/>
     </form>
 </div>

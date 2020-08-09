@@ -2,7 +2,9 @@ package web.model;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Set;
@@ -17,10 +19,19 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
       private Long id;
 
+    @NotBlank(message = "Name is required")
+    private String name;
 
-    private String name; // уникальное значение
+    @Size(min = 1, max = 10, message = "Surname should be from 1 to 10 symbols")
+    private String surname;
+
+    @Email
+    private String email;
 
 
+    private int age;
+
+    @Size(min = 3, message = "Minimum 3 symbols")
     private String password;
 
     @Transient
@@ -35,6 +46,29 @@ public class User implements UserDetails {
 
     }
 
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
 
     public Long getId() {
         return id;
@@ -87,7 +121,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return name;
+        return email;
     }
 
     @Override

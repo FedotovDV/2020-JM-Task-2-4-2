@@ -2,17 +2,28 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
 <html lang="en">
 
-    <title>Thymeleaf Demo</title>
+<!-- Required meta tags -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- reference CSS file -->
-    <link rel="stylesheet" th:href="@{/css/demo.css}">
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+      integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
+
+<!-- reference CSS file -->
+<link rel="stylesheet" th:href="@{/css/demo.css}">
 
 </head>
 
 <body>
+<div align="center">
+
+    <a th:href="@{/registration}">Registration User</span></a>
+
+    <a th:href="@{/login}">Login</a>
 
 
-
-<a th:href="@{/registration}">Registration User</a>
+</div>
 </body>
 </html>
