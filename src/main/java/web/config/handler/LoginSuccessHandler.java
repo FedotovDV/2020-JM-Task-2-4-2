@@ -9,6 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collection;
 
 @Component
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
@@ -17,25 +18,21 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest httpServletRequest,
                                         HttpServletResponse httpServletResponse,
                                         Authentication authentication) throws IOException {
-//        httpServletResponse.sendRedirect("/");
+
         httpServletResponse.setStatus(HttpServletResponse.SC_OK);
-        System.out.println("LoginSuccessHandler ");
-        boolean admin = false;
 
         for (GrantedAuthority auth : authentication.getAuthorities()) {
-            System.out.println("authentication "+ auth.getAuthority());
-            if ("ROLE_ADMIN".equals(auth.getAuthority())){
-                admin = true;
+            if ("ROLE_ADMIN".equals(auth.getAuthority())) {
+                System.out.println(auth.getAuthority());
+                httpServletResponse.sendRedirect("/admin");
+            } else {
+                System.out.println("ROLE_USER");
+                String email = httpServletRequest.getParameter("email");
+                System.out.println(email);
+                httpServletResponse.sendRedirect("/user/" + email);
             }
         }
-
-        if(admin){
-            System.out.println("LoginSuccessHandler /admin");
-            httpServletResponse.sendRedirect("/admin");
-        }else{
-            System.out.println("LoginSuccessHandler /user");
-            httpServletResponse.sendRedirect("/user");
-        }
     }
+
 
 }

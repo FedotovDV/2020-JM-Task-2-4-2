@@ -18,5 +18,5 @@ public interface UserService {
 
     User getUserByName(String username);
 
-//    User getUserByEmail(String email);
+
 }

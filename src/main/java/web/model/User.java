@@ -4,6 +4,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.persistence.*;
 import java.util.Collection;
@@ -26,7 +27,7 @@ public class User implements UserDetails {
     private String surname;
 
     @Email
-    private String email;
+     private String email;
 
 
     private int age;

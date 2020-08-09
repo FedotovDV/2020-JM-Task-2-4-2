@@ -16,58 +16,17 @@ import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import web.config.handler.LoginSuccessHandler;
-import web.security.AuthProviderImpl;
+
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-//
-//    @Override
-//    public void configure(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.inMemoryAuthentication().withUser("ADMIN").password("ADMIN").roles("ADMIN");
-//    }
-//
-//    @Override
-//    protected void configure(HttpSecurity http) throws Exception {
-//        http.formLogin()
-//                // указываем страницу с формой логина
-//                .loginPage("/login")
-//                //указываем логику обработки при логине
-//                .successHandler(new LoginSuccessHandler())
-//                // указываем action с формы логина
-//                .loginProcessingUrl("/login")
-//                // Указываем параметры логина и пароля с формы логина
-//                .usernameParameter("j_username")
-//                .passwordParameter("j_password")
-//                // даем доступ к форме логина всем
-//                .permitAll();
-//
-//        http.logout()
-//                // разрешаем делать логаут всем
-//                .permitAll()
-//                // указываем URL логаута
-//                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-//                // указываем URL при удачном логауте
-//                .logoutSuccessUrl("/login?logout")
-//                //выклчаем кроссдоменную секьюрность (на этапе обучения неважна)
-//                .and().csrf().disable();
-//
-//        http
-//                // делаем страницу регистрации недоступной для авторизированных пользователей
-//                .authorizeRequests()
-//                //страницы аутентификаци доступна всем
-//                .antMatchers("/login").anonymous()
-//                // защищенные URL
-//                .antMatchers("/hello").access("hasAnyRole('ADMIN')").anyRequest().authenticated();
-//    }
 
     @Autowired
     private UserDetailsService userDetailsService; // сервис, с помощью которого тащим пользователя
     @Autowired
     private LoginSuccessHandler loginSuccessHandler; // класс, в котором описана логика перенаправления пользователей по ролям
 
-//    @Autowired
-//    private AuthProviderImpl authProvider;//возможно дублирование UserDetailsServiceImpl
 
     @Autowired
     public void configureGlobalSecurity(AuthenticationManagerBuilder auth) throws Exception {
@@ -82,39 +41,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         filter.setForceEncoding(true);
         http.addFilterBefore(filter, CsrfFilter.class);
         // http.csrf().disable(); - попробуйте выяснить сами, что это даёт
-//        http.authorizeRequests()
-//                .antMatchers("/").permitAll() // доступность всем
-//                .antMatchers("/registration").permitAll() // доступность всем
-//                .antMatchers("/user").permitAll() // доступность всем
-////                .antMatchers("/user").access("hasAnyRole('ROLE_USER')") // разрешаем входить на /user пользователям с ролью User
-//                .and().formLogin()  // Spring сам подставит свою логин форму
-////                .successHandler(loginSuccessHandler) // подключаем наш SuccessHandler для перенеправления по ролям
-//                .and()
-//                .logout().logoutSuccessUrl("/login").permitAll();
-//        http
-//                .authorizeRequests()
-//                .antMatchers("/", "/registration").permitAll()
-//                .antMatchers("/admin").hasRole("ADMIN")
-//                .anyRequest().authenticated()
-//                .and().csrf().disable()
-//                .formLogin().successHandler(loginSuccessHandler)
-//                .loginPage("/login")
-//                .permitAll()
-//                .and()
-//                .logout()
-//                .permitAll();
-//        http.exceptionHandling().accessDeniedPage("/403");
+
         http.authorizeRequests()
                 .antMatchers("/", "/registration", "/login").anonymous()
-                .antMatchers("/user").authenticated()
+                .antMatchers("/user","/user/*").authenticated()
                 .antMatchers("/admin", "/admin/*").hasAnyAuthority("ROLE_ADMIN")
                 .anyRequest().authenticated()
                 .and().csrf().disable()
                 .formLogin()
-//                .loginPage("/login")
-//                .loginProcessingUrl("/login/process")
-//                .usernameParameter("email")
-//                .failureUrl("/login?error=true")
+                .loginPage("/login")
+//                .successHandler(new LoginSuccessHandler())
+                .loginProcessingUrl("/login/process")
+                .usernameParameter("email")
+                .failureUrl("/login?error=true")
                 .successHandler(loginSuccessHandler)
                 .and()
                 .exceptionHandling()
@@ -127,12 +66,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     }
 
-//
-//    //возможно дублирование UserDetailsServiceImpl
-//    @Override
-//    protected void configure(AuthenticationManagerBuilder auth) {
-//        auth.authenticationProvider(authProvider);
-//    }
 
 
     @Bean

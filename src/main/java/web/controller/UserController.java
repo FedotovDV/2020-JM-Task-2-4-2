@@ -1,6 +1,7 @@
 package web.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -11,6 +12,7 @@ import web.service.UserService;
 import web.util.UserValidator;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -28,14 +30,6 @@ public class UserController {
         this.userValidator = userValidator;
     }
 
-    @GetMapping("/user")
-    public String userForm( ModelMap model) {
-
-               List<User> users = userService.getUsers();
-        model.addAttribute("title", "Users");
-        model.addAttribute("users", users);
-        return "user";
-    }
 
     @GetMapping("/registration")
     public String registration(Model model) {
@@ -50,24 +44,31 @@ public class UserController {
             System.out.println("result.hasErrors()" + result.toString());
             return "/registration";
         }
-        System.out.println("addUser " +user.getEmail());
+        System.out.println("addUser " + user.getEmail());
         userService.addUser(user);
         return "redirect:/user";
     }
-//    @PostMapping("/save")
-//    public String registration(@ModelAttribute("user") User user, BindingResult bindingResult, Model model) {
-//        userValidator.validate(user, bindingResult);
-//
-//        if (bindingResult.hasErrors()) {
-//            return "registration";
-//        }
-//
-//        userService.addUser(user);
-//
-////        securityService.autoLogin(user.getUsername(), user.getConfirmPassword());
-//
-//        return "redirect:/user";
-//    }
+
+    //    @GetMapping("/user?email={email}")
+    @GetMapping(value = "/user/{email:.+}")
+    public String userForm(@PathVariable("email") String email, ModelMap model) {
+        System.out.println("in controller " + email);//при передаче email пропадает точка и далее -> (value = "/user/{email:.+}")
+
+        User user = userService.getUserByName(email);
+
+        model.addAttribute("user", user);
+        return "user";
+    }
+
+    @GetMapping("/admin")
+    public String admin(ModelMap model) {
+
+        List<User> users = userService.getUsers();
+        model.addAttribute("title", "Users");
+        model.addAttribute("users", users);
+        return "admin-page";
+    }
+
 
     @GetMapping(value = "/login")
     public String loginForm() {
@@ -86,15 +87,10 @@ public class UserController {
     }
 
 
-
-
     @GetMapping(value = {"/", "/welcome"})
     public String welcome(Model model) {
         return "welcome";
     }
 
-    @GetMapping("/admin")
-    public String admin(Model model) {
-        return "admin-page";
-    }
+
 }
