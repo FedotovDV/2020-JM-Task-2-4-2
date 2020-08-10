@@ -23,13 +23,11 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         for (GrantedAuthority auth : authentication.getAuthorities()) {
             if ("ROLE_ADMIN".equals(auth.getAuthority())) {
-                System.out.println(auth.getAuthority());
                 httpServletResponse.sendRedirect("/admin");
             } else {
-                System.out.println("ROLE_USER");
-                String email = httpServletRequest.getParameter("email");
-                System.out.println(email);
-                httpServletResponse.sendRedirect("/user/" + email);
+//                String email = httpServletRequest.getParameter("email");
+                httpServletResponse.sendRedirect("/user");
+//                httpServletResponse.sendRedirect("/user/" + email);
             }
         }
     }

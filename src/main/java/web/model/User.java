@@ -38,7 +38,8 @@ public class User implements UserDetails {
     @Transient
     private String confirmPassword;
 
-    @ManyToMany
+    //org.hibernate.LazyInitializationException: failed to lazily initialize a collection of role
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;

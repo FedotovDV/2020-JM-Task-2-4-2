@@ -7,12 +7,14 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import web.model.Role;
 import web.model.User;
 import web.service.UserService;
 import web.util.UserValidator;
 
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.*;
 
 @Controller
@@ -34,7 +36,7 @@ public class UserController {
     @GetMapping("/registration")
     public String registration(Model model) {
         model.addAttribute("user", new User());
-        model.addAttribute("roles",  userService.getRoles());
+        model.addAttribute("roles", userService.getRoles());
         return "registration";
     }
 
@@ -45,7 +47,6 @@ public class UserController {
         if (result.hasErrors()) {
             return "/registration";
         }
-        System.out.println("roleId = "+ roleId);
         Set<Role> roleSet = Collections.singleton(userService.getRoleById(roleId));
         user.setRoles(roleSet);
         userService.addUser(user);
@@ -53,23 +54,50 @@ public class UserController {
     }
 
 
-    @GetMapping(value = "/user/{email:.+}")
-    public String userForm(@PathVariable("email") String email, ModelMap model) {
-        System.out.println("in controller " + email);//при передаче email пропадает точка и далее -> (value = "/user/{email:.+}")
+//    @GetMapping(value = "/user/{email:.+}")
+//    public String userForm(@PathVariable("email") String email, ModelMap model) {
+//        System.out.println("in controller " + email);//при передаче email пропадает точка и далее -> (value = "/user/{email:.+}")
+//
+//        User user = userService.getUserByName(email);
+//        String titleRole = "USER";
+//        for (Role role : user.getRoles()) {
+//            if (role.equals("ROLE_ADMIN")) {
+//                titleRole = "ADMIN";
+//            }
+//        }
+//        model.addAttribute("titleRole", titleRole);
+//        model.addAttribute("user", user);
+//        return "user";
+//    }
 
+    @GetMapping(value = "/user")
+    public ModelAndView userForm(ModelAndView modelAndView, Principal principal) {
+        String email = principal.getName();
         User user = userService.getUserByName(email);
-
-        model.addAttribute("user", user);
-        return "user";
+        String titleRole = "USER";
+        for (Role role : user.getRoles()) {
+            if (role.equals("ROLE_ADMIN")) {
+                titleRole = "ADMIN";
+            }
+        }
+        modelAndView.addObject("titleRole", titleRole);
+        modelAndView.addObject("user", user);
+        modelAndView.setViewName("user");
+        return modelAndView;
     }
 
-    @GetMapping("/admin")
-    public String admin(ModelMap model) {
 
+    @GetMapping("/admin")
+    public ModelAndView admin(ModelAndView modelAndView, Principal principal) {
+        String email = principal.getName();
+        User user = userService.getUserByName(email);
+        String titleRole = "ADMIN";
         List<User> users = userService.getUsers();
-        model.addAttribute("title", "Users");
-        model.addAttribute("users", users);
-        return "admin-page";
+        modelAndView.addObject("titleRole", titleRole);
+        modelAndView.addObject("title", "Users");
+        modelAndView.addObject("users", users);
+        modelAndView.setViewName("user");
+        return modelAndView;
     }
 
 
