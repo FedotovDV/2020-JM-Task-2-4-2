@@ -7,17 +7,25 @@
     <title>User Form</title>
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 
 
 </head>
 
 <body>
 
-<nav class="navbar navbar-dark bg-dark">
-    <p style="color: white" class="text-left display-4 font-weight-bold pt-10 " th:text="${user.getEmail()}"></p>
-
-    <p><a class="btn btn-md btn-danger" th:href="@{/logout}" role="button">Logout</a></p>
+<nav class="navbar navbar-dark bg-dark fixed-top">
+    <!--    <p style="color: white" class="text-left display-4 font-weight-bold pt-10 " th:text="${user.getEmail()}"></p>-->
+    <div class="container">
+        <div class="navbar-brand" sec:authorize="isAuthenticated()">
+<!--            Authenticated user:-->
+<!--            User ID: <span sec:authentication="principal.id"></span>-->
+            Logged user: <span style="color: white" sec:authentication="name"></span>
+            Roles: <span  style="color: white" sec:authentication="principal.authorities"></span>
+        </div>
+        <p><a class="btn btn-md btn-danger" th:href="@{/logout}" role="button">Logout</a></p>
+    </div>
 </nav>
 <div class="container">
     <div class="container">
@@ -33,15 +41,18 @@
                 <th scope="col">Surname</th>
                 <th scope="col">Age</th>
                 <th scope="col">Email</th>
+                <th scope="col">Role</th>
             </tr>
             </thead>
             <tbody>
             <tr>
-                <th scope="row" th:text="${user.getId()}"></th>
-                <td  th:text="${user.getName()}"></td>
-                <td th:text="${user.getSurname()}"></td>
-                <td th:text="${user.getAge()}"></td>
-                <td th:text="${user.getEmail()}"></td>
+                <th scope="row" th:text="${user.id}"></th>
+                <td th:text="${user.name}"></td>
+                <td th:text="${user.surname}"></td>
+                <td th:text="${user.age}"></td>
+                <td th:text="${user.email}"></td>
+                <td th:text="${user.role}"></td>
+
             </tr>
 
             </tbody>

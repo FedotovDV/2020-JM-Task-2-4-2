@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 
+import web.model.Role;
 import web.model.User;
 import web.service.UserDetailsServiceImpl;
 
@@ -33,15 +34,10 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User getUserByName(String email) {
-        System.out.println("in DAO :" + email);
+        System.out.println("getUserByName = "+ email);
         User user = entityManager.createQuery(
                 "select U from User U where U.email = :email", User.class)
-                .setParameter("email",email).getSingleResult();
-        if(user != null) {
-            System.out.println("in DAO :" + user.getEmail());
-        } else {
-            System.out.println("user = null");
-        }
+                .setParameter("email", email).getResultList().stream().findFirst().orElse(null);
         return user;
     }
 
@@ -75,6 +71,17 @@ public class UserDaoImpl implements UserDao {
     public User getUserById(Long id) {
 
         return entityManager.find(User.class, id);
+    }
+
+    @Override
+    public  List<Role> getRoles() {
+        return entityManager.createQuery("select R from Role R").getResultList();
+    }
+
+    @Override
+    public Role getRoleById(Long id) {
+        System.out.println("getRoleById = "+ id);
+        return entityManager.find(Role.class, id);
     }
 
 }

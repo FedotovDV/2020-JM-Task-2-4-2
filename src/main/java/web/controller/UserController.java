@@ -7,13 +7,13 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import web.model.Role;
 import web.model.User;
 import web.service.UserService;
 import web.util.UserValidator;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Controller
 @RequestMapping("/")
@@ -34,22 +34,25 @@ public class UserController {
     @GetMapping("/registration")
     public String registration(Model model) {
         model.addAttribute("user", new User());
+        model.addAttribute("roles",  userService.getRoles());
         return "registration";
     }
 
     @PostMapping("/registration")
-    public String saveUser(@ModelAttribute @Valid User user, BindingResult result) {
+    public String saveUser(@ModelAttribute @Valid User user, @RequestParam Long roleId, BindingResult result) {
+
         userValidator.validate(user, result);
         if (result.hasErrors()) {
-            System.out.println("result.hasErrors()" + result.toString());
             return "/registration";
         }
-        System.out.println("addUser " + user.getEmail());
+        System.out.println("roleId = "+ roleId);
+        Set<Role> roleSet = Collections.singleton(userService.getRoleById(roleId));
+        user.setRoles(roleSet);
         userService.addUser(user);
         return "redirect:/user";
     }
 
-    //    @GetMapping("/user?email={email}")
+
     @GetMapping(value = "/user/{email:.+}")
     public String userForm(@PathVariable("email") String email, ModelMap model) {
         System.out.println("in controller " + email);//при передаче email пропадает точка и далее -> (value = "/user/{email:.+}")
