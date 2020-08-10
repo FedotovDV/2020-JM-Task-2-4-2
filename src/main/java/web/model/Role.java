@@ -18,7 +18,8 @@ public class Role implements GrantedAuthority {
     private String role;
 
 //org.hibernate.LazyInitializationException: failed to lazily initialize a collection of role
-    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "roles", cascade = CascadeType.ALL)
+@ManyToMany(fetch = FetchType.EAGER, mappedBy = "roles", cascade = CascadeType.REFRESH)
+//    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "roles", cascade = CascadeType.ALL)
     private Set<User> users;
 
 

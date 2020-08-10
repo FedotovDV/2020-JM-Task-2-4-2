@@ -1,19 +1,14 @@
 package web.dao;
 
-import com.sun.istack.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 
 import web.model.Role;
 import web.model.User;
-import web.service.UserDetailsServiceImpl;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
 import java.util.List;
 
 @Repository
@@ -35,10 +30,9 @@ public class UserDaoImpl implements UserDao {
     @Override
     public User getUserByName(String email) {
         System.out.println("getUserByName = "+ email);
-        User user = entityManager.createQuery(
+        return entityManager.createQuery(
                 "select U from User U where U.email = :email", User.class)
                 .setParameter("email", email).getResultList().stream().findFirst().orElse(null);
-        return user;
     }
 
 
@@ -57,7 +51,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public void deleteUser(Long id) {
-
+        System.out.println("deleteUser ="+ id);
         entityManager.remove(getUserById(id));
     }
 
@@ -74,7 +68,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public  List<Role> getRoles() {
+    public List getRoles() {
         return entityManager.createQuery("select R from Role R").getResultList();
     }
 

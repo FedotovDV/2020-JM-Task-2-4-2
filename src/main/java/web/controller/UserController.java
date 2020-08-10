@@ -76,8 +76,9 @@ public class UserController {
         User user = userService.getUserByName(email);
         String titleRole = "USER";
         for (Role role : user.getRoles()) {
-            if (role.equals("ROLE_ADMIN")) {
+            if (role.getRole().equals("ROLE_ADMIN")) {
                 titleRole = "ADMIN";
+                break;
             }
         }
         modelAndView.addObject("titleRole", titleRole);
@@ -93,13 +94,54 @@ public class UserController {
         User user = userService.getUserByName(email);
         String titleRole = "ADMIN";
         List<User> users = userService.getUsers();
+        modelAndView.addObject("user", user);
         modelAndView.addObject("titleRole", titleRole);
-        modelAndView.addObject("title", "Users");
         modelAndView.addObject("users", users);
-        modelAndView.setViewName("user");
+        modelAndView.setViewName("admin-page");
         return modelAndView;
     }
 
+    @PostMapping( {"admin/add"})
+    public ModelAndView add(@ModelAttribute("user") User user, @RequestParam Long roleId ) {
+        Set<Role> roleSet = Collections.singleton(userService.getRoleById(roleId));
+        user.setRoles(roleSet);
+        userService.addUser(user);
+        return new ModelAndView("redirect:/admin");
+    }
+
+    @GetMapping("/admin/update")
+    public ModelAndView updateGet(@RequestParam Long id, ModelAndView model) {
+        model.setViewName("edit-user");
+        User user = userService.getUserById(id);
+        model.addObject("user", user);
+        List<Role> roles = userService.getRoles();
+        model.addObject("roles", roles);
+        return model;
+    }
+
+    @PostMapping("/admin/update")
+    public ModelAndView updatePost(@ModelAttribute("admin/user") User user, @RequestParam Long roleId) {
+        Set<Role> roleSet = Collections.singleton(userService.getRoleById(roleId));
+        user.setRoles(roleSet);
+        userService.updateUser(user);
+        return new ModelAndView("redirect:/admin");
+    }
+
+
+    @GetMapping("/admin/delete{id}")
+    public ModelAndView deleteUser(@RequestParam("id") Long id, ModelAndView model) {
+        model.setViewName("delete-user");
+        userService.deleteUser(id);
+        return new ModelAndView("redirect:/admin");
+    }
+
+//
+//    @GetMapping("/admin/delete{id}")
+//    public ModelAndView deleteUser(@RequestParam("id") Long id, ModelAndView model) {
+//        model.setViewName("delete-user");
+//        userService.deleteUser(id);
+//        return new ModelAndView("redirect:/admin");
+//    }
 
     @GetMapping(value = "/login")
     public String loginForm() {

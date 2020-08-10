@@ -15,10 +15,11 @@
 
 <body>
 
-<nav class="navbar navbar-dark bg-dark">
-    <p style="color: white" class="text-left display-4 font-weight-bold pt-10 " sec:authentication="authorities"></p>
-
+<nav class="navbar navbar-dark bg-dark fixed-top">
+    <p style="color: white" class="text-sm-left  font-weight-bold  " th:text="${user.getEmail()}"></p>
+    <p style="color: white" class="text-sm-left  font-weight-bold  " th:text="${titleRole}"></p>
     <p><a class="btn btn-md btn-danger" th:href="@{/logout}" role="button">Logout</a></p>
+    </div>
 </nav>
 <div class="container">
     <div class="container">
@@ -34,18 +35,29 @@
                 <th scope="col">Surname</th>
                 <th scope="col">Age</th>
                 <th scope="col">Email</th>
+                <th scope="col">Role</th>
             </tr>
             </thead>
             <tbody>
 
             <th:block th:each="user : ${users}">
-                <tr>
-                    <td th:text="${user.getId()}"></td>
-                    <td th:text="${user.getName()}"></td>
-                    <td th:text="${user.getSurname()}"></td>
-                    <td th:text="${user.getAge()}"></td>
-                    <td th:text="${user.getEmail()}"></td>
-                </tr>
+                <th:block th:each="role : ${user.getRoles()}">
+                    <tr>
+                        <th th:text="${user.id}"></th>
+                        <td th:text="${user.name}"></td>
+                        <td th:text="${user.surname}"></td>
+                        <td th:text="${user.age}"></td>
+                        <td th:text="${user.email}"></td>
+                        <td th:text="${role.role}"></td>
+                        <td>
+                            <a th:href="@{/admin/update(id=${user.id})}" class="btn btn-info">Edit</a>
+                        </td>
+
+                        <td>
+                            <a th:href="@{/admin/delete(id=${user.id})}" class="btn btn-danger"> Delete</a>
+                        </td>
+                    </tr>
+                </th:block>
             </th:block>
             </tbody>
         </table>
