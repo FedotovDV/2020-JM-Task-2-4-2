@@ -50,17 +50,7 @@ public class UserController {
             modelAndView.setViewName("/registration");
             return  modelAndView;
         }
-        Set<Role> roles = new HashSet<>();
-        System.out.println("userRole = "+ userRole);
-        System.out.println("adminRole = "+ adminRole);
-        if (userRole != null) {
-            roles.add(userService.getRoleById(2L));
-        }
-        if (adminRole != null) {
-            roles.add(userService.getRoleById(1L));
-        }
-
-        user.setRoles(roles);
+        setUserRoles(user, userRole, adminRole);
         userService.addUser(user);
         modelAndView.setViewName("/user");
         return modelAndView;
@@ -118,13 +108,38 @@ public class UserController {
         return modelAndView;
     }
 
-    @PostMapping( {"admin/add"})
-    public ModelAndView add(@ModelAttribute("user") User user, @RequestParam Long roleId ) {
-        Set<Role> roleSet = Collections.singleton(userService.getRoleById(roleId));
-        user.setRoles(roleSet);
+
+    @GetMapping("/admin/add")
+    public ModelAndView addGet() {
+        ModelAndView model = new ModelAndView();
+        model.setViewName("add-new-user");
+        model.addObject("user", new User());
+        model.addObject("roles", userService.getRoles());
+        return model;
+    }
+
+
+    @PostMapping( {"/admin/add"})
+    public ModelAndView addPost(@ModelAttribute("user") @Valid User user,  BindingResult result,
+                                 @RequestParam(value = "userRole", required = false) String userRole,
+                                 @RequestParam(value = "adminRole",  required = false) String adminRole) {
+
+        userValidator.validate(user, result);
+        if (result.hasErrors()) {
+            ModelAndView modelAndView = new ModelAndView();
+            modelAndView.setViewName("add-new-user");
+            return  modelAndView;
+        }
+        setUserRoles(user, userRole, adminRole);
         userService.addUser(user);
         return new ModelAndView("redirect:/admin");
     }
+//    public ModelAndView addPost(@ModelAttribute("user") User user, @RequestParam Long roleId ) {
+//        Set<Role> roleSet = Collections.singleton(userService.getRoleById(roleId));
+//        user.setRoles(roleSet);
+//        userService.addUser(user);
+//        return new ModelAndView("redirect:/admin");
+//    }
 
     @GetMapping("/admin/update")
     public ModelAndView updateGet(@RequestParam Long id, ModelAndView model) {
@@ -137,11 +152,24 @@ public class UserController {
     }
 
     @PostMapping("/admin/update")
-    public ModelAndView updatePost(@ModelAttribute("admin/user") User user, @RequestParam Long roleId) {
-        Set<Role> roleSet = Collections.singleton(userService.getRoleById(roleId));
-        user.setRoles(roleSet);
+    public ModelAndView updatePost(@ModelAttribute("admin/user") User user,
+                                   @RequestParam(value = "userRole", required = false) String userRole,
+                                   @RequestParam(value = "adminRole",  required = false) String adminRole){
+
+        setUserRoles(user, userRole, adminRole);
         userService.updateUser(user);
         return new ModelAndView("redirect:/admin");
+    }
+
+    private void setUserRoles(@ModelAttribute("admin/user") User user, @RequestParam(value = "userRole", required = false) String userRole, @RequestParam(value = "adminRole", required = false) String adminRole) {
+        Set<Role> roles = new HashSet<>();
+        if (userRole != null) {
+            roles.add(userService.getRoleById(2L));
+        }
+        if (adminRole != null) {
+            roles.add(userService.getRoleById(1L));
+        }
+        user.setRoles(roles);
     }
 
 

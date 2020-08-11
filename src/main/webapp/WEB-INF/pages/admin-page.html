@@ -21,47 +21,70 @@
     <p><a class="btn btn-md btn-danger" th:href="@{/logout}" role="button">Logout</a></p>
     </div>
 </nav>
+
+
 <div class="container">
     <div class="container">
         <h4 style="color: green" class="text-center display-4 font-weight-bold pt-8 ">User page</h4>
     </div>
+    <div class="card text-center">
+        <div class="card-header">
+            <ul class="nav nav-tabs card-header-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#">Users table</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/admin/add}">New user</a>
+                </li>
+            </ul>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Admin panel</h5>
 
-    <div class="container">
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th scope="col">Id</th>
-                <th scope="col">Name</th>
-                <th scope="col">Surname</th>
-                <th scope="col">Age</th>
-                <th scope="col">Email</th>
-                <th scope="col">Role</th>
-            </tr>
-            </thead>
-            <tbody>
 
-            <th:block th:each="user : ${users}">
-                <th:block th:each="role : ${user.getRoles()}">
+            <div class="container">
+                <table class="table table-striped">
+                    <thead>
                     <tr>
-                        <th th:text="${user.id}"></th>
-                        <td th:text="${user.name}"></td>
-                        <td th:text="${user.surname}"></td>
-                        <td th:text="${user.age}"></td>
-                        <td th:text="${user.email}"></td>
-                        <td th:text="${role.role}"></td>
-                        <td>
-                            <a th:href="@{/admin/update(id=${user.id})}" class="btn btn-info">Edit</a>
-                        </td>
-
-                        <td>
-                            <a th:href="@{/admin/delete(id=${user.id})}" class="btn btn-danger"> Delete</a>
-                        </td>
+                        <th scope="col" class="text-center">Id</th>
+                        <th scope="col" class="text-center">Name</th>
+                        <th scope="col" class="text-center">Surname</th>
+                        <th scope="col" class="text-center">Age</th>
+                        <th scope="col" class="text-center">Email</th>
+                        <th scope="col" class="text-center">Role</th>
+                        <th scope="col" class="text-center" colspan="2">Action</th>
                     </tr>
-                </th:block>
-            </th:block>
-            </tbody>
-        </table>
+                    </thead>
+                    <tbody>
 
+                    <th:block th:each="user : ${users}">
+
+                        <tr>
+                            <th th:text="${user.id}"></th>
+                            <td th:text="${user.name}"></td>
+                            <td th:text="${user.surname}"></td>
+                            <td th:text="${user.age}"></td>
+                            <td th:text="${user.email}"></td>
+                            <td>
+                                <th:block th:each="role : ${user.getRoles()}">
+                                    <a th:text="${role.role}"></a>
+                                </th:block>
+                            </td>
+
+                            <td>
+                                <a th:href="@{/admin/update(id=${user.id})}" class="btn btn-outline-info">Edit</a>
+                            </td>
+
+                            <td>
+                                <a th:href="@{/admin/delete(id=${user.id})}" class="btn btn-outline-danger"> Delete</a>
+                            </td>
+                        </tr>
+
+                    </th:block>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 </body>
