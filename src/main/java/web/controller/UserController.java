@@ -41,16 +41,29 @@ public class UserController {
     }
 
     @PostMapping("/registration")
-    public String saveUser(@ModelAttribute @Valid User user, @RequestParam Long roleId, BindingResult result) {
-
+    public ModelAndView saveUser(@ModelAttribute("user") @Valid User user,  BindingResult result,
+                                 @RequestParam(value = "userRole", required = false) String userRole,
+                                 @RequestParam(value = "adminRole",  required = false) String adminRole) {
+        ModelAndView modelAndView = new ModelAndView();
         userValidator.validate(user, result);
         if (result.hasErrors()) {
-            return "/registration";
+            modelAndView.setViewName("/registration");
+            return  modelAndView;
         }
-        Set<Role> roleSet = Collections.singleton(userService.getRoleById(roleId));
-        user.setRoles(roleSet);
+        Set<Role> roles = new HashSet<>();
+        System.out.println("userRole = "+ userRole);
+        System.out.println("adminRole = "+ adminRole);
+        if (userRole != null) {
+            roles.add(userService.getRoleById(2L));
+        }
+        if (adminRole != null) {
+            roles.add(userService.getRoleById(1L));
+        }
+
+        user.setRoles(roles);
         userService.addUser(user);
-        return "redirect:/user";
+        modelAndView.setViewName("/user");
+        return modelAndView;
     }
 
 
@@ -71,8 +84,11 @@ public class UserController {
 //    }
 
     @GetMapping(value = "/user")
-    public ModelAndView userForm(ModelAndView modelAndView, Principal principal) {
-        String email = principal.getName();
+    public ModelAndView userForm(Authentication authentication){
+        ModelAndView modelAndView = new ModelAndView();//(ModelAndView modelAndView, Principal principal) {
+//        String email = principal.getName();
+        String email = authentication.getName();
+        System.out.println("email = "+ email);
         User user = userService.getUserByName(email);
         String titleRole = "USER";
         for (Role role : user.getRoles()) {
@@ -81,6 +97,7 @@ public class UserController {
                 break;
             }
         }
+        System.out.println(" titleRole = "+  titleRole);
         modelAndView.addObject("titleRole", titleRole);
         modelAndView.addObject("user", user);
         modelAndView.setViewName("user");
@@ -129,19 +146,21 @@ public class UserController {
 
 
     @GetMapping("/admin/delete{id}")
-    public ModelAndView deleteUser(@RequestParam("id") Long id, ModelAndView model) {
+    public ModelAndView deleteGet(@RequestParam("id") Long id, ModelAndView model) {
         model.setViewName("delete-user");
+        User user = userService.getUserById(id);
+        model.addObject("user", user);
+        List<Role> roles = userService.getRoles();
+        model.addObject("roles", roles);
+        return model;
+    }
+
+
+    @PostMapping("/admin/delete{id}")
+    public ModelAndView deletePost(@RequestParam("id") Long id, ModelAndView model) {
         userService.deleteUser(id);
         return new ModelAndView("redirect:/admin");
     }
-
-//
-//    @GetMapping("/admin/delete{id}")
-//    public ModelAndView deleteUser(@RequestParam("id") Long id, ModelAndView model) {
-//        model.setViewName("delete-user");
-//        userService.deleteUser(id);
-//        return new ModelAndView("redirect:/admin");
-//    }
 
     @GetMapping(value = "/login")
     public String loginForm() {

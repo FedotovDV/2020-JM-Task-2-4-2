@@ -9,7 +9,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Component
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
@@ -20,17 +22,17 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
                                         Authentication authentication) throws IOException {
 
         httpServletResponse.setStatus(HttpServletResponse.SC_OK);
-
-        for (GrantedAuthority auth : authentication.getAuthorities()) {
-            if ("ROLE_ADMIN".equals(auth.getAuthority())) {
-                httpServletResponse.sendRedirect("/admin");
-            } else {
-//                String email = httpServletRequest.getParameter("email");
-                httpServletResponse.sendRedirect("/user");
-//                httpServletResponse.sendRedirect("/user/" + email);
-            }
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        List<String> roles = new ArrayList<String>();
+        for (GrantedAuthority a : authorities) {
+            roles.add(a.getAuthority());
+        }
+        if (roles.contains("ROLE_ADMIN")) {
+            httpServletResponse.sendRedirect("/admin");
+        } else {
+            httpServletResponse.sendRedirect("/user");
         }
     }
-
-
 }
+
+
