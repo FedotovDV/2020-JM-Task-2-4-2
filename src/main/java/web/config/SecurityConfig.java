@@ -22,10 +22,13 @@ import web.config.handler.LoginSuccessHandler;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private UserDetailsService userDetailsService; // сервис, с помощью которого тащим пользователя
-    @Autowired
-    private LoginSuccessHandler loginSuccessHandler; // класс, в котором описана логика перенаправления пользователей по ролям
+    private final UserDetailsService userDetailsService; // сервис, с помощью которого тащим пользователя
+    private final LoginSuccessHandler loginSuccessHandler; // класс, в котором описана логика перенаправления пользователей по ролям
+
+    public SecurityConfig(UserDetailsService userDetailsService, LoginSuccessHandler loginSuccessHandler) {
+        this.userDetailsService = userDetailsService;
+        this.loginSuccessHandler = loginSuccessHandler;
+    }
 
 
     @Autowired
@@ -57,7 +60,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .successHandler(loginSuccessHandler)
                 .and()
                 .exceptionHandling()
-                .accessDeniedPage("/login")
+                .accessDeniedPage("/user")
                 .and()
                 .logout()
                 .permitAll()

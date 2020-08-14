@@ -38,19 +38,16 @@
         <input type="text" th:field="*{confirmPassword}" class="form-control mb-4 col-4" placeholder="confirmPassword">
 
 
-        <div class="form-group row">
-            <label  class="col-sm-2 col-form-label col-form-label-lg">Role</label>
-            <div class="col-sm-10">
-
-                <select th:name="roleId">
-                    <option th:each="role : ${roles}"
-                            th:value="${role.getId()}"
-                            th:text="${role.getRole()}">
-                    </option>
-                </select></td>
-
-            </div>
-        </div>
+        <th:block th:each="role : ${user.getRoles()}">
+            <a th:text="${role.role}"></a>
+        </th:block>
+        <ul>
+            <li th:each="role : ${roles}">
+                <input type="checkbox" th:field="*{roles}" th:value="${role.getId()}" />
+                <label th:for="${#ids.prev('roles')}"
+                       th:text="#{${role.getRole()}}"></label>
+            </li>
+        </ul>
 
 
         <button type="submit" class="btn btn-danger col-2">Delete</button>
